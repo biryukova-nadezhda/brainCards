@@ -1,4 +1,5 @@
-import { createEl } from "../helpers/createEl.js"
+import { createEl } from "../helpers/createEl.js";
+import { declOfNum } from "../helpers/declOfNum.js";
 
 export const createCategory = (parent) => {
   const category = createEl('section', {
@@ -31,7 +32,7 @@ export const createCategory = (parent) => {
 
     const cardPairs = createEl('span', {
       className: 'category__pairs',
-      textContent: data.length,
+      textContent: declOfNum(data.length, ['пара', 'пары', 'пар']),
     });
 
     btn.append(cardTitle, cardPairs);
@@ -56,11 +57,12 @@ export const createCategory = (parent) => {
   container.append(list);
   category.append(container);
 
+  /* Функции монтирования и размонтирования элемента */
   const mount = (data) => {
     list.textContent = '';
-    app.append(category);
     const cards = data.map(createCategoryCard);
     list.append(...cards);
+    app.append(category);
   }
 
   const unmount = () => {
