@@ -4,7 +4,7 @@ import { createHeader } from './js/components/createHeader.js';
 import { createPairs } from './js/components/createPairs.js';
 import { showAlert } from './js/components/showAlert.js';
 import { createEl } from './js/helpers/createEl.js';
-import { fetchCards, fetchCategories, fetchCreateCategory, fetchDeleteCategory, fetchEditCategory } from './js/service/api.service.js';
+import { fetchCards, fetchCategories, fetchCreateCategory, fetchDeleteCategory, fetchEditCategory } from './service/api.service.js';
 
 const init = async () => {
   /* 
@@ -63,7 +63,6 @@ const init = async () => {
     headerObject.updateHeaderTitle('Категории');
     categoryObject.mount(dataCategories);
   };
-  /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
   /* 
     Функция обнуляет все секции на странице, а также получает список категорий и отображает их на странице. Если при получении категорий от сервера возникли ошибки, то выводит ошибку на экран пользователя 
