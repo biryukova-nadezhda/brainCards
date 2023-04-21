@@ -4,4 +4,4 @@
 * CSS
 * fetch
 
-Результат можно посмотреть [здесь]()
+Результат можно посмотреть [здесь](https://biryukova-nadezhda.github.io/brainCards/)
