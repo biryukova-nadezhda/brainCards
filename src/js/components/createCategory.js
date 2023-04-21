@@ -1,5 +1,5 @@
-import { createEl } from "../helpers/createEl.js";
-import { declOfNum } from "../helpers/declOfNum.js";
+import { createEl } from '../helpers/createEl.js';
+import { declOfNum } from '../helpers/declOfNum.js';
 
 /* 
   Функция создания раздела с категориями.

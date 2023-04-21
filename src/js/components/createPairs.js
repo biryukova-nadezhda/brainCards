@@ -1,6 +1,6 @@
-import { createEl } from "../helpers/createEl.js";
-import { shuffleArray } from "../helpers/shuffleArray.js";
-import { showAlert } from "./showAlert.js";
+import { createEl } from '../helpers/createEl.js';
+import { shuffleArray } from '../helpers/shuffleArray.js';
+import { showAlert } from './showAlert.js';
 
 /* 
   Функция создания секции с карточками для изучения слов.
@@ -37,60 +37,63 @@ export const createPairs = (parent) => {
   pairs.append(container);
 
   /* 
-    Функция управлением карточкой. 
-    Принимает данные с сервера и выводит их в карточки
+    Функция переворота карточек.
+    1. Добавляет класс для переворота карточки и удаляет его через секунду, для анимации переворота
+    2. Если у нас последний набор слов, то выводим сообщение об этом
+    3. Показываем пользователю сообщение о том, что сейчас произойдет переход на главную страничку и возвращаемся туда
   */
-  const cardController = data => {
-    let index = 0; // Переменная для перешагивания по карточкам
+  let dataCards = []; // промежуточная переменная для хранения копии данных, приходящих с сервера
+  const flipCard = () => {
+    card.classList.add('card__item_flipped');
+    card.removeEventListener('click', flipCard);
 
-    cardFront.textContent = data[index][0];
-    cardBack.textContent = data[index][1];
-
-    const flipCard = () => {
-      card.classList.add('card__item_flipped');
-      card.removeEventListener('click', flipCard);
-
+    setTimeout(() => {
+      card.classList.remove('card__item_flipped');
       setTimeout(() => {
-        card.classList.remove('card__item_flipped');
-        setTimeout(() => {
-          index++;
+        card.index++;
 
-          if (index === data.length) {
-            cardFront.textContent = 'Конец категории';
-            showAlert('Вернемся к категориям', 2000);
-
-            setTimeout(() => {
-              btnReturn.click();
-            }, 2000);
-
-            return;
-          };
-
-          cardFront.textContent = data[index][0];
-          cardBack.textContent = data[index][1];
+        if (card.index === dataCards.length) {
+          cardFront.textContent = 'Конец категории';
+          showAlert('Вернемся к категориям', 2000);
 
           setTimeout(() => {
-            card.addEventListener('click', flipCard);
-          }, 200);
-        }, 100);
-      }, 1000);
-    };
+            btnReturn.click();
+          }, 2000);
 
+          return;
+        };
+
+        cardFront.textContent = dataCards[card.index][0];
+        cardBack.textContent = dataCards[card.index][1];
+
+        setTimeout(() => {
+          card.addEventListener('click', flipCard);
+        }, 200);
+      }, 100);
+    }, 1000);
+  };
+
+  /* 
+    Функция управлением карточкой. 
+    1. Принимает данные с сервера и выводит их в карточки.
+    2. Навешивает слушатель события клика по карточке для ее переворота
+  */
+  const cardController = data => {
+    dataCards = [...data];
+    card.index = 0;
+    cardFront.textContent = data[card.index][0];
+    cardBack.textContent = data[card.index][1];
     card.addEventListener('click', flipCard);
   };
 
   /* 
     Функции монтирования элемента. 
+    Сразу перемешиваем исходные данные, а затем уже на основании перемешенного массива создаем карточки.
   */
   const mount = (data = { title: 'Учим', pairs: [] }) => {
     parent.append(pairs);
-
-    /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-    /* Функция перемешивания массива */
-    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    
-    /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-    cardController(data.pairs);
+    const shuffleData = shuffleArray(data.pairs);
+    cardController(shuffleData);
   };
 
   /* 
@@ -99,6 +102,7 @@ export const createPairs = (parent) => {
   */
   const unmount = () => {
     pairs.remove();
+    card.removeEventListener('click', flipCard);
   };
 
   return { btnReturn, mount, unmount };

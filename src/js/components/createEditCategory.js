@@ -1,10 +1,10 @@
-import { createEl } from "../helpers/createEl.js";
+import { createEl } from '../helpers/createEl.js';
 
 const TITLE = 'Введите название категории'; // исходный заголовок таблицы
 
 /* 
   Функция создания раздела страницы для редактирования категорий.
-  Возвращает объект с методами для монтирования элемента `mount` и размонтирования `unmount`.
+  Возвращает объект с методами для монтирования элемента `mount` и размонтирования `unmount`, функцию парсинга parseData, кнопку сохранения изменений `btnSave` и кнопку отмены `btnCancel`
 */
 export const createEditCategory = (parent) => {
   const editCatecory = createEl('section', {
@@ -56,7 +56,7 @@ export const createEditCategory = (parent) => {
 
   const btnSave = createEl('button', {
     className: 'edit__btn edit__save',
-    textContent: 'Сохранить категорию'
+    textContent: 'Сохранить'
   });
 
   const btnCancel = createEl('button', {
@@ -148,6 +148,42 @@ export const createEditCategory = (parent) => {
     tbody.append(emptyRow);
   });
 
+  /* 
+    Функция, которая на основании данных в таблице, формирует объект с массивом данных под ключом pairs
+    1. Находим все ячейки на странице
+    2. Формируем объект data, который мы в последующем будем отправлять
+    3. Проверяем заполнены ли 2 соответствующие ячейки, т.е. пары, если да, то записываем в массив отправляемого объекта
+    4. Проверяем, если заголовок таблицы не пустой, а также не равен стандартному, то его тоже записываем в объект
+    5. Проверяем, если на кнопке есть id, то добавляем его в объект
+  */
+  const parseData = () => {
+    const cellOne = document.querySelectorAll('.table__cell_one');
+    const cellTwo = document.querySelectorAll('.table__cell_two');
+
+    const data = {
+      pairs: [],
+    };
+
+    for (let i = 0; i < cellOne.length; i++) {
+      const textOne = cellOne[i].textContent.trim();
+      const textTwo = cellTwo[i].textContent.trim();
+
+      if (textOne && textTwo) {
+        data.pairs.push([textOne, textTwo]);
+      };
+    };
+
+    if (title.textContent.trim() && title.textContent.trim() !== TITLE) {
+      data.title = title.textContent.trim();
+    };
+
+    if (btnSave.dataset.id) {
+      data.id = btnSave.dataset.id;
+    };
+    
+    return data;
+  };
+
   /*
     Функции монтирования элемента
   */
@@ -172,11 +208,15 @@ export const createEditCategory = (parent) => {
     tbody.append(...rows, emptyRow);
 
     /*
+      Записываем id на кнопку, если он пришел с сервера
+    */
+    btnSave.dataset.id = data.id ? data.id : '';
+
+    /*
       Вставляем в родителя секцию с таблицей
     */
     parent.append(editCatecory);
   };
-
 
   /* 
     Функция размонтирования элемента.
@@ -186,5 +226,5 @@ export const createEditCategory = (parent) => {
     editCatecory.remove();
   };
 
-  return { mount, unmount };
+  return { mount, unmount, parseData, btnSave, btnCancel };
 };

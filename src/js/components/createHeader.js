@@ -1,4 +1,4 @@
-import { createEl } from "../helpers/createEl.js";
+import { createEl } from '../helpers/createEl.js';
 
 /* 
   Функция создания шапки страницы.
