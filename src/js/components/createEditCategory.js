@@ -1,7 +1,11 @@
 import { createEl } from "../helpers/createEl.js";
 
-const TITLE = 'Введите название категории';
+const TITLE = 'Введите название категории'; // исходный заголовок таблицы
 
+/* 
+  Функция создания раздела страницы для редактирования категорий.
+  Возвращает объект с методами для монтирования элемента `mount` и размонтирования `unmount`.
+*/
 export const createEditCategory = (parent) => {
   const editCatecory = createEl('section', {
     className: 'edit section-offset'
@@ -13,8 +17,7 @@ export const createEditCategory = (parent) => {
 
   const title = createEl('h2', {
     className: 'edit__title',
-    contentEditable: true,
-    title: 'Можно редактировать',
+    contentEditable: true
   });
 
   /* Создание редактируемой таблицы */
@@ -68,7 +71,11 @@ export const createEditCategory = (parent) => {
   container.append(title, table, btnWrapper);
   editCatecory.append(container);
 
-  /* Функция создания строки таблицы с данными с сервера */
+  /*
+    Функция создания строки таблицы с данными с сервера.
+    Возвращает элемент строки таблицы, состоящую из трех ячеек, в двух из которых слово и его значение, а в третьей кнопка для удаления строки. 
+    На кнопке сразу навешен слушатель события клика, который удаляет строку, попросив перед этим подтверждение пользователя.
+  */
   const createTrCell = (dataArr) => {
     const tr = createEl('tr');
     const tdOne = createEl('td', {
@@ -92,64 +99,92 @@ export const createEditCategory = (parent) => {
       className: 'table__del',
       textContent: 'x'
     });
+
     tdCellDel.append(btnDelRow);
     tr.append(tdOne, tdTwo, tdCellDel);
 
+    /* 
+      Слушатель события клика по кнопке для удаления строки таблицы с запрашиванием подтверждения от пользователя.
+    */
     btnDelRow.addEventListener('click', () => {
       if (confirm('Вы уверены, что хотите удалить строку?')) {
         tr.remove();
-      }
+      };
     });
 
     return tr;
   };
 
-  /* Функция, очищающая заголовок при клике на него */
+  /*
+    Функция, очищающая заголовок таблицы при клике на него 
+  */
   const clearTitle = () => {
     if (title.textContent === TITLE) {
       title.textContent = '';
     };
   };
 
-  /* Функция, проверяющая, а ввели ли новое название, если нет, то вставляем стандартное */
+  /*
+    Функция, проверяющая, а ввели ли новое название, если нет, то вставляем стандартное
+  */
   const checkTitle = () => {
     if (title.textContent === '') {
       title.textContent = TITLE;
     };
   };
 
+  /*
+    Обрабатываем события фокуса и блюра на заголовке таблицы вышеописанными функциями
+  */
   title.addEventListener('focus', clearTitle);
   title.addEventListener('blur', checkTitle);
 
+  /*
+    Обрабатываем события клика по кнопке добавления строки.
+    Если произошел клик, то вставляем в таблицу пустую строку
+  */
   btnAddRow.addEventListener('click', () => {
     const emptyRow = createTrCell(['', '']);
     tbody.append(emptyRow);
   });
 
-  /* Функции монтирования и размонтирования элемента */
+  /*
+    Функции монтирования элемента
+  */
   const mount = (data = {title: TITLE, pairs: []}) => {
     tbody.textContent = ''; // Очищаем таблицу
     title.textContent = data.title; // Задаем таблице название из data
 
-    /* Добавляем класс заголовку */
+    /* 
+      Добавляем класс заголовку при его редактировании (для визуализации)
+    */
     if (title.textContent === TITLE) {
       title.classList.add('edit__title_change');
     } else {
       title.classList.remove('edit__title_change');
     };
 
-    /* Создаем строки таблицы с данными от сервера и вставляем в таблицу */
+    /*
+      Создаем строки таблицы с данными от сервера и вставляем в таблицу, также добавляем сразу пустую строку для новых слов
+    */
     const rows = data.pairs.map(createTrCell);
-    const emptyRow = createTrCell(['', '']); // Чтобы сразу у нас уже была одна пустая ячейка
+    const emptyRow = createTrCell(['', '']); 
     tbody.append(...rows, emptyRow);
 
-    /* Вставляем в родителя секцию с таблицей */
+    /*
+      Вставляем в родителя секцию с таблицей
+    */
     parent.append(editCatecory);
   };
 
+
+  /* 
+    Функция размонтирования элемента.
+    Удаляет элемент со страницы
+  */
   const unmount = () => {
     editCatecory.remove();
   };
 
   return { mount, unmount };
-}
+};

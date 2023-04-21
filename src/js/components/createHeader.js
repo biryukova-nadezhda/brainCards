@@ -1,5 +1,9 @@
 import { createEl } from "../helpers/createEl.js";
 
+/* 
+  Функция создания шапки страницы.
+  Возвращает объект с методом `updateHeaderTitle` для обновления заголовка страницы, а также элементы: headerLogoLink - для возвращения в исходное состояние страницы (возвращения к категориям), headerBtn - для возможности создания новой категории.
+*/
 export const createHeader = (parent) => {
   const container = createEl('div', {
     className: 'container header__container'
@@ -33,11 +37,11 @@ export const createHeader = (parent) => {
 
   const updateHeaderTitle = headerTitle => {
     title.textContent = headerTitle;
-  }
+  };
 
   return {
     headerLogoLink: link,
     headerBtn: btn,
     updateHeaderTitle
-  }
-}
+  };
+};
