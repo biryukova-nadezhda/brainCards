@@ -1,7 +1,5 @@
 ## Brain Cards - сервис для запоминания слов
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/eec3085f-bd95-405f-b341-fa2e8c7a9e37/deploy-status)](https://app.netlify.com/sites/grand-starship-c16270/deploys)
-
 **Brain Cards** —  это проект на чистом JavaScript, который представляет собой приложение для запоминания слов. Он позволяет пользователям создавать категории слов, редактировать их, удалять, а также изучать слова в режиме поворотных карточек.
 
 ### Стек технологий:
